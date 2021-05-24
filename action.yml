@@ -1,0 +1,50 @@
+name: 'godot-build-info'
+description: 'Add version and other info at build time for Godot Engine projects'
+inputs:
+  version:  # id of input
+    description: 'package version'
+    required: false
+  commit:  # id of input
+    description: 'commit hash'
+    required: false
+  build_date:  # id of input
+    description: 'Date/Time when the package was built'
+    required: false
+  file:  # id of input
+    description: 'File to add the overrides'
+    required: true
+    default: override.cfg
+runs:
+  using: "composite"
+  steps:
+    - name: Set Parameters
+      shell: bash
+      env:
+        COMMIT: ${{ inputs.commit }}
+        BUILD_DATE: ${{ inputs.build_date }}
+      run: |-
+        if [ -z "${COMMIT}" ]; then
+          echo "commit=${GITHUB_SHA}" >> $GITHUB_ENV
+        else
+          echo "commit=${COMMIT}" >> $GITHUB_ENV
+        fi
+        if [ -z "${BUILD_DATE}" ]; then
+          echo "build_date=$(date +'%Y/%m/%d %H:%M:%S')" >> $GITHUB_ENV
+        else
+          echo "build_date=${BUILD_DATE}" >> $GITHUB_ENV
+        fi
+    - name: Set Settings Override
+      shell: bash
+      env:
+        FILE: ${{ inputs.file }}
+        VERSION: ${{ inputs.version }}
+        COMMIT: ${{ env.commit }}
+        BUILD_DATE: ${{ env.build_date }}
+      run: |-
+        echo "[build_info]" > "${FILE}"
+        echo "package\version=${VERSION}" >> "${FILE}"
+        echo "package\build_date=${BUILD_DATE}" >> "${FILE}"
+        echo "source\commit=${COMMIT}" >> "${FILE}"
+
+        echo "-- ${FILE} --"
+        cat "${FILE}"
