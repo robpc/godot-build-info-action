@@ -42,9 +42,9 @@ runs:
         BUILD_DATE: ${{ env.build_date }}
       run: |-
         echo "[build_info]" > "${FILE}"
-        echo "package\version=${VERSION}" >> "${FILE}"
-        echo "package\build_date=${BUILD_DATE}" >> "${FILE}"
-        echo "source\commit=${COMMIT}" >> "${FILE}"
+        echo "package/version=\"${VERSION}\"" >> "${FILE}"
+        echo "package/build_date=\"${BUILD_DATE}\"" >> "${FILE}"
+        echo "source/commit=\"${COMMIT}\"" >> "${FILE}"
 
         echo "-- ${FILE} --"
         cat "${FILE}"
