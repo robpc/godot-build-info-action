@@ -1,4 +1,7 @@
 name: 'godot-build-info'
+branding:
+  icon: 'info'
+  color: 'blue'
 description: 'Add version and other info at build time for Godot Engine projects'
 inputs:
   version:  # id of input
